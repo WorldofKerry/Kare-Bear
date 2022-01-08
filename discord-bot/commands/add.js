@@ -3,9 +3,9 @@ const { strictEqual } = require('assert');
 const fs = require('fs');
 const { TLSSocket } = require('tls');
 
-var usersPath = 'database/users.json'; 
-var usersRead = fs.readFileSync(usersPath); 
-var users = JSON.parse(usersRead); 
+usersPath = 'database/users.json'; 
+usersString = fs.readFileSync(usersPath); 
+users = JSON.parse(usersString); 
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -34,64 +34,55 @@ module.exports = {
 			case cmd.match(/ jan/)?.input: 
 			month = 1; 
 			monthIndex = / jan/.exec(cmd).index; 
-			monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 			break; 
 			case cmd.match(/ feb/)?.input: 
 			month = 2; 
 			monthIndex = / feb/.exec(cmd).index; 
-			monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 			break; 
 			case cmd.match(/ mar/)?.input: 
 			month = 3; 
 			monthIndex = / mar/.exec(cmd).index; 
-			monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 			break; 
 			case cmd.match(/ apr/)?.input: 
 			month = 4; 
 			monthIndex = / apr/.exec(cmd).index; 
-			monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 			break; 
 			case cmd.match(/ may/)?.input: 
 			month = 5; 
 			monthIndex = / may/.exec(cmd).index; 
-			monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 			break; 
 			case cmd.match(/ jun/)?.input: 
 			month = 6; 
 			monthIndex = / jun/.exec(cmd).index; 
-			monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 			break; 
 			case cmd.match(/ jul/)?.input: 
 			month = 7; 
 			monthIndex = / jul/.exec(cmd).index; 
-			monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 			break; 
 			case cmd.match(/ aug/)?.input: 
 			month = 8; 
 			monthIndex = / aug/.exec(cmd).index; 
-			monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 			break; 
 			case cmd.match(/ sep/)?.input: 
 			month = 9; 
 			monthIndex = / sep/.exec(cmd).index; 
-			monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 			break; 
 			case cmd.match(/ oct/)?.input: 
 			month = 10; 
 			monthIndex = / oct/.exec(cmd).index; 
-			monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 			break; 
 			case cmd.match(/ nov/)?.input: 
 			month = 11; 
 			monthIndex = / nov/.exec(cmd).index; 
-			monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 			break; 
 			case cmd.match(/ dec/)?.input: 
 			month = 12; 
 			monthIndex = / dec/.exec(cmd).index; 
-			monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
-			break; 			
+			break; 	
+			default: 
+			month = 0; 		
 		}
+		monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 		dayIndex = /\d/.exec(cmd.substring(monthIndex)).index + monthIndex; 
 		if (/^\d+$/.test(cmd.charAt(dayIndex + 1))) {
 			day = parseInt(cmd.substring(dayIndex, dayIndex + 2)); 
@@ -99,6 +90,9 @@ module.exports = {
 		} else {
 			day = parseInt(cmd.substring(dayIndex, dayIndex + 1)); 
 			dayIndex++; 
+		}
+		if (month === 0) {
+			
 		}
 		if (/(pm )|(PM )|(Pm )/.test(cmd.substring(dayIndex))) {
 			amPm = "pm"; 
@@ -133,7 +127,15 @@ module.exports = {
 		if (amPm === "pm") {
 			hour = hour + 12; 
 		}
-		date = new Date(new Date().getFullYear(), month, day, hour)
-		await interaction.reply(date.toString() + " " + cmd.substring(amPmIndex)); 
+		date = new Date(new Date().getFullYear(), month, day, hour); 
+		data = new Date(date.toString()); 
+		if (interaction.user in users) {
+			users[interaction.user].push([date.toString(), cmd.substring(amPmIndex)]); 
+		} else {
+			users[interaction.user] = [[date.toString(), cmd.substring(amPmIndex)]]; 
+		}
+		usersString = JSON.stringify(users, null, "\t"); 
+		fs.writeFileSync(usersPath, usersString)
+		await interaction.reply({ content: interaction.user.toString() + " " + date.toString() + " " + cmd.substring(amPmIndex), ephemeral: true}); 
 	},
 };
