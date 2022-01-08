@@ -9,9 +9,15 @@ module.exports = {
 		const row = new MessageActionRow()
 			.addComponents(
 				new MessageButton()
-					.setCustomId('primary')
-					.setLabel('Primary')
-					.setStyle('PRIMARY'),
+					.setCustomId('done')
+					.setLabel('Done')
+					.setStyle('SUCCESS')
+					.setEmoji('✅'), 
+				new MessageButton()
+					.setCustomId('delete')
+					.setLabel('Delete')
+					.setStyle("DANGER")
+					.setEmoji('❌'), 					
 			);
 
 		await interaction.reply({ content: 'Pong!', components: [row] });
