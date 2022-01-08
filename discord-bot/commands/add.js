@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { strictEqual } = require('assert');
 const fs = require('fs');
+const { TLSSocket } = require('tls');
 
 var usersPath = 'database/users.json'; 
 var usersRead = fs.readFileSync(usersPath); 
@@ -29,65 +30,110 @@ module.exports = {
 		// 	.setDescription('info about the server')),
 	async execute(interaction) {	
 		cmd = interaction.options.data[0].value	
-		month = 0; 
-		monthMatch = 0; 
 		switch (cmd) {
-			case cmd.match(/ jan /)?.input: 
+			case cmd.match(/ jan/)?.input: 
 			month = 1; 
-			monthMatch = / jan /.exec(cmd); 
+			monthIndex = / jan/.exec(cmd).index; 
+			monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 			break; 
-			case cmd.match(/ feb /)?.input: 
+			case cmd.match(/ feb/)?.input: 
 			month = 2; 
-			monthMatch = / feb /.exec(cmd); 
+			monthIndex = / feb/.exec(cmd).index; 
+			monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 			break; 
-			case cmd.match(/ mar /)?.input: 
+			case cmd.match(/ mar/)?.input: 
 			month = 3; 
-			monthMatch = / mar /.exec(cmd); 
+			monthIndex = / mar/.exec(cmd).index; 
+			monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 			break; 
-			case cmd.match(/ apr /)?.input: 
+			case cmd.match(/ apr/)?.input: 
 			month = 4; 
-			monthMatch = / apr /.exec(cmd); 
+			monthIndex = / apr/.exec(cmd).index; 
+			monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 			break; 
-			case cmd.match(/ may /)?.input: 
+			case cmd.match(/ may/)?.input: 
 			month = 5; 
-			monthMatch = / may /.exec(cmd); 
+			monthIndex = / may/.exec(cmd).index; 
+			monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 			break; 
-			case cmd.match(/ jun /)?.input: 
+			case cmd.match(/ jun/)?.input: 
 			month = 6; 
-			monthMatch = / jun /.exec(cmd); 
+			monthIndex = / jun/.exec(cmd).index; 
+			monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 			break; 
-			case cmd.match(/ jul /)?.input: 
+			case cmd.match(/ jul/)?.input: 
 			month = 7; 
-			monthMatch = / jul /.exec(cmd); 
+			monthIndex = / jul/.exec(cmd).index; 
+			monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 			break; 
-			case cmd.match(/ aug /)?.input: 
+			case cmd.match(/ aug/)?.input: 
 			month = 8; 
-			monthMatch = / aug /.exec(cmd); 
+			monthIndex = / aug/.exec(cmd).index; 
+			monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 			break; 
-			case cmd.match(/ sep /)?.input: 
+			case cmd.match(/ sep/)?.input: 
 			month = 9; 
-			monthMatch = / sep /.exec(cmd); 
+			monthIndex = / sep/.exec(cmd).index; 
+			monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 			break; 
-			case cmd.match(/ oct /)?.input: 
+			case cmd.match(/ oct/)?.input: 
 			month = 10; 
-			monthMatch = / oct /.exec(cmd); 
+			monthIndex = / oct/.exec(cmd).index; 
+			monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 			break; 
-			case cmd.match(/ nov /)?.input: 
+			case cmd.match(/ nov/)?.input: 
 			month = 11; 
-			monthMatch = / nov /.exec(cmd); 
+			monthIndex = / nov/.exec(cmd).index; 
+			monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 			break; 
-			case cmd.match(/ dec /)?.input: 
+			case cmd.match(/ dec/)?.input: 
 			month = 12; 
-			monthMatch = / dec /.exec(cmd); 
+			monthIndex = / dec/.exec(cmd).index; 
+			monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 			break; 			
 		}
-		day = 0; 
-		dayMatch = /[0-9]/.exec(cmd.substring(monthMatch.index)); 
-		if (/^\d+$/.test(cmd.charAt(dayMatch.index + monthMatch.index + 1))) {
-			day = cmd.substring(dayMatch.index + monthMatch.index, dayMatch.index + monthMatch.index + 2); 
+		dayIndex = /\d/.exec(cmd.substring(monthIndex)).index + monthIndex; 
+		if (/^\d+$/.test(cmd.charAt(dayIndex + 1))) {
+			day = parseInt(cmd.substring(dayIndex, dayIndex + 2)); 
+			dayIndex+=2; 
 		} else {
-			day = cmd.substring(dayMatch.index + monthMatch.index, dayMatch.index + monthMatch.index + 1); 
+			day = parseInt(cmd.substring(dayIndex, dayIndex + 1)); 
+			dayIndex++; 
 		}
-		await interaction.reply(month.toString() + " " + day)
+		if (/(pm )|(PM )|(Pm )/.test(cmd.substring(dayIndex))) {
+			amPm = "pm"; 
+			amPmIndex = /(pm )|(PM )|(Pm )/.exec(cmd.substring(dayIndex)).index + dayIndex + 3; 
+			hourIndex = /\d/.exec(cmd.substring(dayIndex, amPmIndex)).index + dayIndex; 
+			if (/^\d$/.test(cmd.charAt(hourIndex + 1))) {
+				hour = parseInt(cmd.substring(hourIndex, hourIndex + 2)); 
+				hourIndex+=2; 
+			} else {
+				hour = parseInt(cmd.substring(hourIndex, hourIndex + 1)); 
+				hourIndex++; 
+			}
+		} else {
+			amPm = "am"; 
+			if (/(am )|(AM )|(Am )/.test(cmd.substring(dayIndex))) {
+				amPmIndex = /(am )|(AM )|(Am )/.exec(cmd.substring(dayIndex)).index + dayIndex + 3; 
+			} else {
+				amPmIndex = cmd.length; 
+			}
+			hourIndex = /\d/.exec(cmd.substring(dayIndex, amPmIndex)).index + dayIndex; 
+			if (/^\d$/.test(cmd.charAt(hourIndex + 1))) {
+				hour = parseInt(cmd.substring(hourIndex, hourIndex + 2)); 
+				hourIndex+=2; 
+			} else {
+				hour = parseInt(cmd.substring(hourIndex, hourIndex + 1)); 
+				hourIndex++; 
+			}
+			if (amPmIndex == cmd.length) {
+				amPmIndex = hourIndex + 1; 
+			}
+		}
+		if (amPm === "pm") {
+			hour = hour + 12; 
+		}
+		date = new Date(new Date().getFullYear(), month, day, hour)
+		await interaction.reply(date.toString() + " " + cmd.substring(amPmIndex)); 
 	},
 };
