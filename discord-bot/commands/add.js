@@ -3,10 +3,6 @@ const { strictEqual } = require('assert');
 const fs = require('fs');
 const { TLSSocket } = require('tls');
 
-usersPath = 'database/users.json'; 
-usersString = fs.readFileSync(usersPath); 
-users = JSON.parse(usersString); 
-
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('am')
@@ -29,54 +25,57 @@ module.exports = {
 		// .addSubcommand(subcommand => subcommand.setName('server')
 		// 	.setDescription('info about the server')),
 	async execute(interaction) {	
+		usersPath = 'database/users.json'; 
+		usersString = fs.readFileSync(usersPath); 
+		users = JSON.parse(usersString); 
 		cmd = interaction.options.data[0].value	
 		switch (cmd) {
 			case cmd.toLowerCase().match(/jan/)?.input: 
-			var month = 1; 
+			var month = 0; 
 			monthIndex = /jan/.exec(cmd.toLowerCase()).index; 
 			break; 
 			case cmd.toLowerCase().match(/feb/)?.input: 
-			var month = 2; 
+			var month = 1; 
 			monthIndex = /feb/.exec(cmd.toLowerCase()).index; 
 			break; 
 			case cmd.toLowerCase().match(/mar/)?.input: 
-			var month = 3; 
+			var month = 2; 
 			monthIndex = /mar/.exec(cmd.toLowerCase()).index; 
 			break; 
 			case cmd.toLowerCase().match(/apr/)?.input: 
-			var month = 4; 
+			var month = 3; 
 			monthIndex = /apr/.exec(cmd.toLowerCase()).index; 
 			break; 
 			case cmd.toLowerCase().match(/may/)?.input: 
-			var month = 5; 
+			var month = 4; 
 			monthIndex = /may/.exec(cmd.toLowerCase()).index; 
 			break; 
 			case cmd.toLowerCase().match(/jun/)?.input: 
-			var month = 6; 
+			var month = 5; 
 			monthIndex = /jun/.exec(cmd.toLowerCase()).index; 
 			break; 
 			case cmd.toLowerCase().match(/jul/)?.input: 
-			var month = 7; 
+			var month = 6; 
 			monthIndex = /jul/.exec(cmd.toLowerCase()).index; 
 			break; 
 			case cmd.toLowerCase().match(/aug/)?.input: 
-			var month = 8; 
+			var month = 7; 
 			monthIndex = /aug/.exec(cmd.toLowerCase()).index; 
 			break; 
 			case cmd.toLowerCase().match(/sep/)?.input: 
-			var month = 9; 
+			var month = 8; 
 			monthIndex = /sep/.exec(cmd.toLowerCase()).index; 
 			break; 
 			case cmd.toLowerCase().match(/oct/)?.input: 
-			var month = 10; 
+			var month = 9; 
 			monthIndex = /oct/.exec(cmd.toLowerCase()).index; 
 			break; 
 			case cmd.toLowerCase().match(/nov/)?.input: 
-			var month = 11; 
+			var month = 10; 
 			monthIndex = /nov/.exec(cmd.toLowerCase()).index; 
 			break; 
 			case cmd.toLowerCase().match(/dec/)?.input: 
-			var month = 12; 
+			var month = 11; 
 			monthIndex = /dec/.exec(cmd.toLowerCase()).index; 
 			break; 		
 		}
@@ -107,7 +106,6 @@ module.exports = {
 				tomorrow.setDate(new Date().getDate() + 1); 
 				var month = tomorrow.getMonth(); 
 				day = tomorrow.getDate(); 
-				console.debug(month + " " + day); 
 				break; 
 
 				case cmd.toLowerCase().match(/mon/)?.input: 
@@ -177,7 +175,6 @@ module.exports = {
 		if (/(pm )|(PM )|(Pm )/.test(cmd.substring(dayIndex))) {
 			amPm = "pm"; 
 			amPmIndex = /(pm )|(PM )|(Pm )/.exec(cmd.substring(dayIndex)).index + dayIndex + 3; 
-			console.debug(dayIndex + " " + amPmIndex); 
 			hourIndex = /\d/.exec(cmd.substring(dayIndex, amPmIndex)).index + dayIndex; 
 			if (/^\d$/.test(cmd.charAt(hourIndex + 1))) {
 				hour = parseInt(cmd.substring(hourIndex, hourIndex + 2)); 
@@ -207,9 +204,8 @@ module.exports = {
 		}
 		if (amPm === "pm") {
 			hour = hour + 12; 
-		}
-		date = new Date(new Date().getFullYear(), month, day, hour); 
-		data = new Date(date.toString()); 
+		}		
+		date = new Date(new Date().getFullYear(), month, day, hour); 	
 		if (interaction.user in users) {
 			users[interaction.user].push([date.toString(), cmd.substring(amPmIndex)]); 
 		} else {
@@ -217,6 +213,9 @@ module.exports = {
 		}
 		usersString = JSON.stringify(users, null, "\t"); 
 		fs.writeFileSync(usersPath, usersString)
+		console.debug(date.toString()); 
+		console.debug(date.getMonth()); 
+		console.debug(new Date(new Date().getFullYear(), 10, day, hour).getMonth()); 
 		await interaction.reply({ content: interaction.user.toString() + " " + date.toString() + " " + cmd.substring(amPmIndex), ephemeral: true}); 
 	},
 };

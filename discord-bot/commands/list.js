@@ -1,17 +1,16 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageActionRow, MessageButton } = require('discord.js');
+const { MessageActionRow, MessageButton, MessageSelectMenu } = require('discord.js');
 const fs = require('fs');
-
-var usersPath = 'database/users.json'; 
-var usersRead = fs.readFileSync(usersPath); 
-var users = JSON.parse(usersRead); 
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('jesus')
-		.setDescription('Replies with Pong!'),
+		.setName('l')
+		.setDescription('list the user\'s tasks'),
 	async execute(interaction) {
-		const row = new MessageActionRow()
+		var usersPath = 'database/users.json'; 
+		var usersRead = fs.readFileSync(usersPath); 
+		var users = JSON.parse(usersRead); 
+		const buttonRow = new MessageActionRow()
 			.addComponents(
 				new MessageButton()
 					.setCustomId('done')
@@ -24,6 +23,20 @@ module.exports = {
 					.setStyle("DANGER")
 					.setEmoji('❌'), 					
 			);		
-		await interaction.reply({ content: 'Pong!', components: [row] });
+		var menu = new MessageSelectMenu().setCustomId('Select task(s)').setPlaceholder('Nothing selected').setMinValues(1); 
+		var msg = "Your tasks: \n"; 
+		tasks = users[interaction.user]; 
+		for (const element of tasks) {
+			let date = new Date(element[0]); 
+			msg = msg + "**" + element[1] + "** due " + date.toLocaleString() + "\n"; 
+			menu.addOptions([
+				{
+					label: element[1], 
+					description: date.toLocaleString(), 
+					value: element[1]
+				}]); 
+		}		
+		var menuRow = new MessageActionRow().addComponents(menu); 
+		await interaction.reply({ content: msg, components: [menuRow, buttonRow], ephemeral: true}); 
 	},
 };
