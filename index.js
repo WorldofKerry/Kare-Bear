@@ -35,54 +35,14 @@ client.once('ready', () => {
 				// console.debug(client.users.cache)
 				// console.debug(client.users.cache.get(id.substring(2, id.length-2))); 
 				if (new Date(task[0]).getTime() - Date.now() <= 1.08e+7) {
-					client.channels.cache.get('579386313028141110').send(id + " Task due soon: **" + task[1] + "**"); 
+					client.channels.cache.get('579386313028141110').send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now())); 
 					client.users.fetch(id.substring(2, id.length-1), false).then((user) => {
-						user.send(id + " Task due soon: **" + task[1] + "**"); 
+						user.send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now())); 
 					})
 				}
 			}
 		}
-	}, 3.6e+6)
-	setInterval(function() {
-		var usersPath = 'database/users.json'; 
-		var usersRead = fs.readFileSync(usersPath); 
-		var users = JSON.parse(usersRead); 
-		for (const [id, tasks] of Object.entries(users)) {
-			for (const task of tasks) {
-				// console.debug(new Date(task[0]).getTime()); 
-				// console.debug(Date.now()); 
-				// console.debug(client.channels.cache.get('397856134360334349').send("test"))
-				// console.debug(client.users.cache)
-				// console.debug(client.users.cache.get(id.substring(2, id.length-2))); 
-				if (new Date(task[0]).getTime() - Date.now() <= 1.8e+6) {
-					client.channels.cache.get('579386313028141110').send(id + " Task due soon: **" + task[1] + "**"); 
-					client.users.fetch(id.substring(2, id.length-1), false).then((user) => {
-						user.send(id + " Task due soon: **" + task[1] + "**"); 
-					})
-				}
-			}
-		}
-	}, 600000)
-	setInterval(function() {
-		var usersPath = 'database/users.json'; 
-		var usersRead = fs.readFileSync(usersPath); 
-		var users = JSON.parse(usersRead); 
-		for (const [id, tasks] of Object.entries(users)) {
-			for (const task of tasks) {
-				// console.debug(new Date(task[0]).getTime()); 
-				// console.debug(Date.now()); 
-				// console.debug(client.channels.cache.get('397856134360334349').send("test"))
-				// console.debug(client.users.cache)
-				// console.debug(client.users.cache.get(id.substring(2, id.length-2))); 
-				if (new Date(task[0]).getTime() - Date.now() <= 900000) {
-					client.channels.cache.get('579386313028141110').send(id + " Task due soon: **" + task[1] + "**"); 
-					client.users.fetch(id.substring(2, id.length-1), false).then((user) => {
-						user.send(id + " Task due soon: **" + task[1] + "**"); 
-					})
-				}
-			}
-		}
-	}, 300000)
+	}, 1.8e+6)
 });
 
 client.on('interactionCreate', async interaction => {
@@ -122,3 +82,19 @@ client.on('interactionCreate', async interaction => {
 });
 
 client.login(token);
+
+
+function msToTime(duration) {
+	var minutes = Math.floor((duration / (1000 * 60)) % 60),
+	  hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+		
+	console.debug(hours + " " + minutes); 
+	if (hours <= 0 && minutes <= 0) {		
+		return "is past due"; 
+	}
+	minutes = (minutes < 10) ? "0" + minutes : minutes;
+	if (hours <= 0) {
+		return "due in " + minutes + " min";
+	}
+	return "due in " + hours + ":" + minutes; 	
+  }

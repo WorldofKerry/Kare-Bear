@@ -44,6 +44,6 @@ module.exports = {
 			])
 		}
 		var menuRow = new MessageActionRow().addComponents(menu); 
-		await interaction.reply({ content: msg, components: [menuRow], ephemeral: true}); 
+		await interaction.reply({ content: msg, components: [menuRow], ephemeral: false}); 
 	},
 };

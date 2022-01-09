@@ -223,14 +223,14 @@ module.exports = {
 			var elementJson = JSON.stringify(element); 
 			var tasksJson = JSON.stringify(users[interaction.user]); 
 			if (tasksJson.indexOf(elementJson) != -1) {
-				await interaction.reply({ content: "Error: task already exists", ephemeral: true}); 
+				await interaction.reply({ content: "Error: task already exists", ephemeral: false}); 
 			} else {
 				users[interaction.user].push(element); 
-				await interaction.reply({ content: "Added task: **" + cmd.substring(amPmIndex) + "** " + date.toLocaleString(), ephemeral: true}); 
+				await interaction.reply({ content: "Added task: **" + cmd.substring(amPmIndex) + "** " + date.toLocaleString(), ephemeral: false}); 
 			}			
 		} else {
 			users[interaction.user] = [element]; 
-			await interaction.reply({ content: "Added task: **" + cmd.substring(amPmIndex) + "** " + date.toLocaleString(), ephemeral: true}); 
+			await interaction.reply({ content: "Added task: **" + cmd.substring(amPmIndex) + "** " + date.toLocaleString(), ephemeral: false}); 
 		}
 		usersString = JSON.stringify(users, null, "\t"); 
 		fs.writeFileSync(usersPath, usersString); 		
