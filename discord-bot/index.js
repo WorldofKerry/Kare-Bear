@@ -32,7 +32,6 @@ client.once('ready', () => {
 client.on('interactionCreate', async interaction => {
 	if (interaction.isCommand()) {
 		const command = client.commands.get(interaction.commandName);
-		console.debug(interaction.commandName); 
 		if (!command) return;
 		try {
 			await command.execute(interaction);
@@ -51,10 +50,6 @@ client.on('interactionCreate', async interaction => {
 				msg = element.split("\n")[0]; 
 				date = element.split("\n")[1]; 
 				for (const task of tasks) {
-					console.debug(task[0]); 
-					console.debug(task[1]); 
-					console.debug(date); 
-					console.debug(msg); 
 					if (task[0] === date && task[1] === msg) {
 						tasks.pop(task)
 					}

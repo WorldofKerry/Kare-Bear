@@ -9,8 +9,8 @@ module.exports = {
 		.setDescription('Add task with mobile settings')
 		// .addSubcommand(addSubcommand => addSubcommand.setName('t1'))
 		.addStringOption(option => option
-			.setName('date_task')
-			.setDescription('month_date_hour_ampm_task')),
+			.setName('task')
+			.setDescription('[month] [date] [hour] [am/pm] task')),
 		// 	.addChoice('test', 'testing'))
 		// .addStringOption(option => option.setName('task').setDescription('Task for automatic parsing')),
 		// .addSubcommand(subcommand => subcommand.setName('user')
@@ -170,6 +170,12 @@ module.exports = {
 				var month = nextDay.getMonth(); 
 				day = nextDay.getDate(); 
 				break; 
+
+				default: 
+				dayIndex = 0; 
+				var month = new Date().getMonth(); 
+				day = new Date().getDate()
+
 			}
 		}		
 		if (/(pm )|(PM )|(Pm )/.test(cmd.substring(dayIndex))) {
@@ -212,13 +218,21 @@ module.exports = {
 			hour = hour + 12; 
 		}		
 		date = new Date(new Date().getFullYear(), month, day, hour); 	
-		if (interaction.user in users) {
-			users[interaction.user].push([date.toString(), cmd.substring(amPmIndex)]); 
+		var element = [date.toString(), cmd.substring(amPmIndex)];
+		if (interaction.user in users) {			 
+			var elementJson = JSON.stringify(element); 
+			var tasksJson = JSON.stringify(users[interaction.user]); 
+			if (tasksJson.indexOf(elementJson) != -1) {
+				await interaction.reply({ content: "Error: task already exists", ephemeral: true}); 
+			} else {
+				users[interaction.user].push(element); 
+				await interaction.reply({ content: "Added task: **" + cmd.substring(amPmIndex) + "** " + date.toLocaleString(), ephemeral: true}); 
+			}			
 		} else {
-			users[interaction.user] = [[date.toString(), cmd.substring(amPmIndex)]]; 
+			users[interaction.user] = [element]; 
+			await interaction.reply({ content: "Added task: **" + cmd.substring(amPmIndex) + "** " + date.toLocaleString(), ephemeral: true}); 
 		}
 		usersString = JSON.stringify(users, null, "\t"); 
-		fs.writeFileSync(usersPath, usersString)
-		await interaction.reply({ content: "Added task: **" + cmd.substring(amPmIndex) + "** " + date.toLocaleString(), ephemeral: true}); 
+		fs.writeFileSync(usersPath, usersString); 		
 	},
 };

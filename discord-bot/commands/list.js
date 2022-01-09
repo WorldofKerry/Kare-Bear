@@ -23,8 +23,8 @@ module.exports = {
 					.setStyle("DANGER")
 					.setEmoji('❌'), 					
 			);		
-		var menu = new MessageSelectMenu().setCustomId('delete tasks').setPlaceholder('Delete tasks').setMinValues(1); 
-		var msg = "Your tasks: \n"; 
+		var menu = new MessageSelectMenu().setCustomId('delete tasks').setPlaceholder('Delete Tasks').setMinValues(1); 
+		var msg = "Your Tasks: \n"; 
 		tasks = users[interaction.user]; 
 		for (const element of tasks) {
 			let date = new Date(element[0]); 
@@ -35,7 +35,6 @@ module.exports = {
 					value: element[1] + "\n" + date.toString()
 				}]); 
 		}		
-		console.log(menu); 
 		if (menu['options'].length === 0) {
 			menu.addOptions([
 				{
