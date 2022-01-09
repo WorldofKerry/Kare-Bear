@@ -23,7 +23,7 @@ module.exports = {
 					.setStyle("DANGER")
 					.setEmoji('❌'), 					
 			);		
-		var menu = new MessageSelectMenu().setCustomId('Select task(s)').setPlaceholder('Nothing selected').setMinValues(1); 
+		var menu = new MessageSelectMenu().setCustomId('delete tasks').setPlaceholder('Delete tasks').setMinValues(1); 
 		var msg = "Your tasks: \n"; 
 		tasks = users[interaction.user]; 
 		for (const element of tasks) {
@@ -31,12 +31,20 @@ module.exports = {
 			msg = msg + "**" + element[1] + "** due " + date.toLocaleString() + "\n"; 
 			menu.addOptions([
 				{
-					label: element[1], 
-					description: date.toLocaleString(), 
-					value: element[1]
+					label: element[1] + " due " + date.toLocaleString(), 
+					value: element[1] + "\n" + date.toString()
 				}]); 
 		}		
+		console.log(menu); 
+		if (menu['options'].length === 0) {
+			menu.addOptions([
+				{
+					label: "No tasks to delete", 
+					value: " "
+				}
+			])
+		}
 		var menuRow = new MessageActionRow().addComponents(menu); 
-		await interaction.reply({ content: msg, components: [menuRow, buttonRow], ephemeral: true}); 
+		await interaction.reply({ content: msg, components: [menuRow], ephemeral: true}); 
 	},
 };

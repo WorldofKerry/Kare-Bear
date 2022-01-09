@@ -5,12 +5,12 @@ const { TLSSocket } = require('tls');
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('am')
+		.setName('a')
 		.setDescription('Add task with mobile settings')
 		// .addSubcommand(addSubcommand => addSubcommand.setName('t1'))
 		.addStringOption(option => option
-			.setName('cmd')
-			.setDescription('command')),
+			.setName('date_task')
+			.setDescription('month_date_hour_ampm_task')),
 		// 	.addChoice('test', 'testing'))
 		// .addStringOption(option => option.setName('task').setDescription('Task for automatic parsing')),
 		// .addSubcommand(subcommand => subcommand.setName('user')
@@ -190,17 +190,23 @@ module.exports = {
 			} else {
 				amPmIndex = cmd.length; 
 			}
-			hourIndex = /\d/.exec(cmd.substring(dayIndex, amPmIndex)).index + dayIndex; 
-			if (/^\d$/.test(cmd.charAt(hourIndex + 1))) {
-				hour = parseInt(cmd.substring(hourIndex, hourIndex + 2)); 
-				hourIndex+=2; 
+			if (/\d/.test(cmd.substring(dayIndex, amPmIndex))) {
+				hourIndex = /\d/.exec(cmd.substring(dayIndex, amPmIndex)).index + dayIndex; 
+				if (/^\d$/.test(cmd.charAt(hourIndex + 1))) {
+					hour = parseInt(cmd.substring(hourIndex, hourIndex + 2)); 
+					hourIndex+=2; 
+				} else {
+					hour = parseInt(cmd.substring(hourIndex, hourIndex + 1)); 
+					hourIndex++; 
+				}
+				if (amPmIndex == cmd.length) {
+					amPmIndex = hourIndex + 1; 
+				}
 			} else {
-				hour = parseInt(cmd.substring(hourIndex, hourIndex + 1)); 
-				hourIndex++; 
+				hour = 0; 
+				amPmIndex = dayIndex; 
 			}
-			if (amPmIndex == cmd.length) {
-				amPmIndex = hourIndex + 1; 
-			}
+			
 		}
 		if (amPm === "pm") {
 			hour = hour + 12; 
@@ -213,9 +219,6 @@ module.exports = {
 		}
 		usersString = JSON.stringify(users, null, "\t"); 
 		fs.writeFileSync(usersPath, usersString)
-		console.debug(date.toString()); 
-		console.debug(date.getMonth()); 
-		console.debug(new Date(new Date().getFullYear(), 10, day, hour).getMonth()); 
-		await interaction.reply({ content: interaction.user.toString() + " " + date.toString() + " " + cmd.substring(amPmIndex), ephemeral: true}); 
+		await interaction.reply({ content: "Added task: **" + cmd.substring(amPmIndex) + "** " + date.toLocaleString(), ephemeral: true}); 
 	},
 };
