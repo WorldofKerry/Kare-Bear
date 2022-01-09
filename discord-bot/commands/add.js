@@ -31,72 +31,153 @@ module.exports = {
 	async execute(interaction) {	
 		cmd = interaction.options.data[0].value	
 		switch (cmd) {
-			case cmd.match(/ jan/)?.input: 
-			month = 1; 
-			monthIndex = / jan/.exec(cmd).index; 
+			case cmd.toLowerCase().match(/jan/)?.input: 
+			var month = 1; 
+			monthIndex = /jan/.exec(cmd.toLowerCase()).index; 
 			break; 
-			case cmd.match(/ feb/)?.input: 
-			month = 2; 
-			monthIndex = / feb/.exec(cmd).index; 
+			case cmd.toLowerCase().match(/feb/)?.input: 
+			var month = 2; 
+			monthIndex = /feb/.exec(cmd.toLowerCase()).index; 
 			break; 
-			case cmd.match(/ mar/)?.input: 
-			month = 3; 
-			monthIndex = / mar/.exec(cmd).index; 
+			case cmd.toLowerCase().match(/mar/)?.input: 
+			var month = 3; 
+			monthIndex = /mar/.exec(cmd.toLowerCase()).index; 
 			break; 
-			case cmd.match(/ apr/)?.input: 
-			month = 4; 
-			monthIndex = / apr/.exec(cmd).index; 
+			case cmd.toLowerCase().match(/apr/)?.input: 
+			var month = 4; 
+			monthIndex = /apr/.exec(cmd.toLowerCase()).index; 
 			break; 
-			case cmd.match(/ may/)?.input: 
-			month = 5; 
-			monthIndex = / may/.exec(cmd).index; 
+			case cmd.toLowerCase().match(/may/)?.input: 
+			var month = 5; 
+			monthIndex = /may/.exec(cmd.toLowerCase()).index; 
 			break; 
-			case cmd.match(/ jun/)?.input: 
-			month = 6; 
-			monthIndex = / jun/.exec(cmd).index; 
+			case cmd.toLowerCase().match(/jun/)?.input: 
+			var month = 6; 
+			monthIndex = /jun/.exec(cmd.toLowerCase()).index; 
 			break; 
-			case cmd.match(/ jul/)?.input: 
-			month = 7; 
-			monthIndex = / jul/.exec(cmd).index; 
+			case cmd.toLowerCase().match(/jul/)?.input: 
+			var month = 7; 
+			monthIndex = /jul/.exec(cmd.toLowerCase()).index; 
 			break; 
-			case cmd.match(/ aug/)?.input: 
-			month = 8; 
-			monthIndex = / aug/.exec(cmd).index; 
+			case cmd.toLowerCase().match(/aug/)?.input: 
+			var month = 8; 
+			monthIndex = /aug/.exec(cmd.toLowerCase()).index; 
 			break; 
-			case cmd.match(/ sep/)?.input: 
-			month = 9; 
-			monthIndex = / sep/.exec(cmd).index; 
+			case cmd.toLowerCase().match(/sep/)?.input: 
+			var month = 9; 
+			monthIndex = /sep/.exec(cmd.toLowerCase()).index; 
 			break; 
-			case cmd.match(/ oct/)?.input: 
-			month = 10; 
-			monthIndex = / oct/.exec(cmd).index; 
+			case cmd.toLowerCase().match(/oct/)?.input: 
+			var month = 10; 
+			monthIndex = /oct/.exec(cmd.toLowerCase()).index; 
 			break; 
-			case cmd.match(/ nov/)?.input: 
-			month = 11; 
-			monthIndex = / nov/.exec(cmd).index; 
+			case cmd.toLowerCase().match(/nov/)?.input: 
+			var month = 11; 
+			monthIndex = /nov/.exec(cmd.toLowerCase()).index; 
 			break; 
-			case cmd.match(/ dec/)?.input: 
-			month = 12; 
-			monthIndex = / dec/.exec(cmd).index; 
-			break; 	
-			default: 
-			month = 0; 		
+			case cmd.toLowerCase().match(/dec/)?.input: 
+			var month = 12; 
+			monthIndex = /dec/.exec(cmd.toLowerCase()).index; 
+			break; 		
 		}
-		monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
-		dayIndex = /\d/.exec(cmd.substring(monthIndex)).index + monthIndex; 
-		if (/^\d+$/.test(cmd.charAt(dayIndex + 1))) {
-			day = parseInt(cmd.substring(dayIndex, dayIndex + 2)); 
-			dayIndex+=2; 
+		if (typeof month !== 'undefined') {
+			monthIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
+			dayIndex = /\d/.exec(cmd.substring(monthIndex)).index + monthIndex; 
+			if (/^\d+$/.test(cmd.charAt(dayIndex + 1))) {
+				day = parseInt(cmd.substring(dayIndex, dayIndex + 2)); 
+				dayIndex+=2; 
+			} else {
+				day = parseInt(cmd.substring(dayIndex, dayIndex + 1)); 
+				dayIndex++; 
+			}
 		} else {
-			day = parseInt(cmd.substring(dayIndex, dayIndex + 1)); 
-			dayIndex++; 
-		}
-		if (month === 0) {
-			
-		}
+			switch(cmd) {
+				case cmd.toLowerCase().match(/today/)?.input: 
+				monthIndex = /today/.exec(cmd.toLowerCase()).index; 
+				dayIndex = / /.exec(cmd.substring(monthIndex + 1)).index + 
+				monthIndex + 1; 
+				var month = new Date().getMonth(); 
+				day = new Date().getDate()
+				break; 
+
+				case cmd.toLowerCase().match(/(tomorrow)|(tmr)|(tmrw)/)?.input: 
+				monthIndex = /(tomorrow)|(tmr)|(tmrw)/.exec(cmd.toLowerCase()).index; 
+				dayIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
+				tomorrow = new Date(); 
+				tomorrow.setDate(new Date().getDate() + 1); 
+				var month = tomorrow.getMonth(); 
+				day = tomorrow.getDate(); 
+				console.debug(month + " " + day); 
+				break; 
+
+				case cmd.toLowerCase().match(/mon/)?.input: 
+				monthIndex = /mon/.exec(cmd.toLowerCase()).index; 
+				dayIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
+				nextDay = new Date(); 
+				nextDay.setDate(new Date().getDate() + (1 - 1 - new Date().getDay() + 7) % 7 + 1); 
+				var month = nextDay.getMonth(); 
+				day = nextDay.getDate(); 
+				break; 
+
+				case cmd.toLowerCase().match(/tue/)?.input: 
+				monthIndex = /tue/.exec(cmd.toLowerCase()).index; 
+				dayIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
+				nextDay = new Date(); 
+				nextDay.setDate(new Date().getDate() + (2 - 1 - new Date().getDay() + 7) % 7 + 1); 
+				var month = nextDay.getMonth(); 
+				day = nextDay.getDate(); 
+				break; 
+
+				case cmd.toLowerCase().match(/wed/)?.input: 
+				monthIndex = /wed/.exec(cmd.toLowerCase()).index; 
+				dayIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
+				nextDay = new Date(); 
+				nextDay.setDate(new Date().getDate() + (3 - 1 - new Date().getDay() + 7) % 7 + 1); 
+				var month = nextDay.getMonth(); 
+				day = nextDay.getDate(); 
+				break; 
+
+				case cmd.toLowerCase().match(/thu/)?.input: 
+				monthIndex = /thu/.exec(cmd.toLowerCase()).index; 
+				dayIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
+				nextDay = new Date(); 
+				nextDay.setDate(new Date().getDate() + (4 - 1 - new Date().getDay() + 7) % 7 + 1); 
+				var month = nextDay.getMonth(); 
+				day = nextDay.getDate(); 
+				break; 
+
+				case cmd.toLowerCase().match(/fri/)?.input: 
+				monthIndex = /fri/.exec(cmd.toLowerCase()).index; 
+				dayIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
+				nextDay = new Date(); 
+				nextDay.setDate(new Date().getDate() + (5 - 1 - new Date().getDay() + 7) % 7 + 1); 
+				var month = nextDay.getMonth(); 
+				day = nextDay.getDate(); 
+				break; 
+
+				case cmd.toLowerCase().match(/sat/)?.input: 
+				monthIndex = /sat/.exec(cmd.toLowerCase()).index; 
+				dayIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
+				nextDay = new Date(); 
+				nextDay.setDate(new Date().getDate() + (6 - 1 - new Date().getDay() + 7) % 7 + 1); 
+				var month = nextDay.getMonth(); 
+				day = nextDay.getDate(); 
+				break; 
+
+				case cmd.toLowerCase().match(/sun/)?.input: 
+				monthIndex = /sun/.exec(cmd.toLowerCase()).index; 
+				dayIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
+				nextDay = new Date(); 
+				nextDay.setDate(new Date().getDate() + (7 - 1 - new Date().getDay() + 7) % 7 + 1); 
+				var month = nextDay.getMonth(); 
+				day = nextDay.getDate(); 
+				break; 
+			}
+		}		
 		if (/(pm )|(PM )|(Pm )/.test(cmd.substring(dayIndex))) {
 			amPm = "pm"; 
 			amPmIndex = /(pm )|(PM )|(Pm )/.exec(cmd.substring(dayIndex)).index + dayIndex + 3; 
+			console.debug(dayIndex + " " + amPmIndex); 
 			hourIndex = /\d/.exec(cmd.substring(dayIndex, amPmIndex)).index + dayIndex; 
 			if (/^\d$/.test(cmd.charAt(hourIndex + 1))) {
 				hour = parseInt(cmd.substring(hourIndex, hourIndex + 2)); 
