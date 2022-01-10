@@ -32,7 +32,7 @@ module.exports = {
 		console.debug(date.getTimezoneOffset()); 
 		if (date.getTimezoneOffset() === 0) {
       console.debug(date.toString()); 
-			date = new Date(date.getTime() - 7*60*60*1000); 
+			date = new Date(date.getTime() - 8*60*60*1000); 
       console.debug(date.toString()); 
 		}
 		msg = msg + "**" + task[1] + "** due " + date.toLocaleString() + "\n"; 
