@@ -7,7 +7,30 @@
     "discord-api-types": "^0.26.1",
     "discord.js": "^13.5.1",
     "dotenv": "^10.0.0",
+    "express": "^4.17.2",
     "keyv": "^4.0.4",
     "sqlite3": "^5.0.2"
-  }
+  },
+  "name": "Kare-Bear-1",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {
+    "node": "^17.3.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WorldofKerry/Kare-Bear.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WorldofKerry/Kare-Bear/issues"
+  },
+  "homepage": "https://github.com/WorldofKerry/Kare-Bear#readme",
+  "description": ""
 }

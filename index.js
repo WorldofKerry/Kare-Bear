@@ -2,6 +2,16 @@ const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
 const { token } = require('./config.json');
 
+// Keep bot online
+const express = require("express")
+const app = express()
+app.listen(3000, () => {
+  console.log("Kare Bear Online"); 
+})
+app.get("/", (req, res) => {
+  res.send("Loading Bearhub...");
+})
+
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
 const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
