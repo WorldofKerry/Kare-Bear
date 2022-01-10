@@ -29,8 +29,9 @@ module.exports = {
     var tasks = utility.getUserTasks(interaction.user); 
     tasks.forEach(task => {		
 		var date = new Date(task[0]); 
+		console.debug(date.getTimezoneOffset()); 
 		if (date.getTimezoneOffset() === 0) {
-			date = new Date(date.getTime() - 7*60*60*1000); 
+			date = new Date(date.getTime() - 8*60*60*1000); 
 		}
 		msg = msg + "**" + task[1] + "** due " + date.toLocaleString() + "\n"; 
 		menu.addOptions([
