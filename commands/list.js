@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageActionRow, MessageButton, MessageSelectMenu } = require('discord.js');
 const fs = require('fs');
-const index = require('../utility.js'); 
+const utility = require('../utility.js'); 
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -26,16 +26,17 @@ module.exports = {
 			);		
 		var menu = new MessageSelectMenu().setCustomId('delete tasks').setPlaceholder('Delete Tasks').setMinValues(1); 
 		var msg = "Your Tasks: \n"; 
-		tasks = users[interaction.user]; 
-		for (const element of tasks) {
-			let date = new Date(element[0]); 
-			msg = msg + "**" + element[1] + "** due " + date.toLocaleString() + "\n"; 
+    var tasks = utility.getUserTasks(interaction.user); 
+    console.debug(tasks); 
+    tasks.forEach(task => {
+      let date = new Date(task[0]); 
+			msg = msg + "**" + task[1] + "** due " + date.toLocaleString() + "\n"; 
 			menu.addOptions([
 				{
-					label: element[1] + " due " + date.toLocaleString(), 
-					value: element[1] + "\n" + date.toString()
+					label: task[1] + " due " + date.toLocaleString(), 
+					value: task[1] + "\n" + date.toString()
 				}]); 
-		}		
+    })
 		if (menu['options'].length === 0) {
 			menu.addOptions([
 				{
