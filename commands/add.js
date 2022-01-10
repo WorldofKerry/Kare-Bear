@@ -28,7 +28,7 @@ module.exports = {
 		usersPath = 'database/users.json'; 
 		usersString = fs.readFileSync(usersPath); 
 		users = JSON.parse(usersString); 
-		cmd = interaction.options.data[0].value	
+		cmd = interaction.options.data[0].value; 
 		switch (cmd) {
 			case cmd.toLowerCase().match(/jan/)?.input: 
 			var month = 0; 

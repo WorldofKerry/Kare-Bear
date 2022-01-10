@@ -35,21 +35,37 @@ for (const file of commandFiles) {
 
 client.once('ready', () => {
 	console.log('Ready!');
-	setInterval(function() {
-		var usersPath = 'database/users.json'; 
-		var usersRead = fs.readFileSync(usersPath); 
-		var users = JSON.parse(usersRead); 
-		for (const [id, tasks] of Object.entries(users)) {
+	// setInterval(function() {
+	// 	var usersPath = 'database/users.json'; 
+	// 	var usersRead = fs.readFileSync(usersPath); 
+	// 	var users = JSON.parse(usersRead); 
+	// 	for (const [id, tasks] of Object.entries(users)) {
+	// 		for (const task of tasks) {
+	// 			if (new Date(task[0]).getTime() - Date.now() <= 1.08e+7) {
+	// 				client.channels.cache.get('579386313028141110').send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now())); 
+	// 				client.users.fetch(id.substring(2, id.length-1), false).then((user) => {
+	// 					user.send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now())); 
+	// 				})
+	// 			}
+	// 		}
+	// 	}
+	// }, 1.8e+6)
+
+  var usersPath = 'database/users.json'; 
+  var usersRead = fs.readFileSync(usersPath); 
+  var users = JSON.parse(usersRead); 
+  for (const [id, tasks] of Object.entries(users)) {
 			for (const task of tasks) {
 				if (new Date(task[0]).getTime() - Date.now() <= 1.08e+7) {
-					client.channels.cache.get('579386313028141110').send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now())); 
-					client.users.fetch(id.substring(2, id.length-1), false).then((user) => {
-						user.send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now())); 
-					})
+          setTimeout(function() {
+            client.channels.cache.get('579386313028141110').send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now())); 
+            client.users.fetch(id.substring(2, id.length-1), false).then((user) => {
+              user.send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now())); 
+					  }); 
+          }, 1.08e+7 - new Date(task[0]).getTime() - Date.now()); 					
 				}
 			}
 		}
-	}, 1.8e+6)
 });
 
 client.on('interactionCreate', async interaction => {
@@ -79,7 +95,6 @@ function msToTime(duration) {
 	var minutes = Math.floor((duration / (1000 * 60)) % 60),
 	  hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
 		
-	console.debug(hours + " " + minutes); 
 	if (hours <= 0 && minutes <= 0) {		
 		return "is past due"; 
 	}

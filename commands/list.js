@@ -27,7 +27,6 @@ module.exports = {
 		var menu = new MessageSelectMenu().setCustomId('delete tasks').setPlaceholder('Delete Tasks').setMinValues(1); 
 		var msg = "Your Tasks: \n"; 
     var tasks = utility.getUserTasks(interaction.user); 
-    console.debug(tasks); 
     tasks.forEach(task => {
       let date = new Date(task[0]); 
 			msg = msg + "**" + task[1] + "** due " + date.toLocaleString() + "\n"; 
@@ -53,7 +52,6 @@ module.exports = {
 			var usersRead = fs.readFileSync(usersPath); 
 			var users = JSON.parse(usersRead); 
       var tasks = users[interaction.user] 
-      console.debug(interaction.values)
 			for (const element of interaction.values) {				       
 				msg = element.split("\n")[0]; 
 				date = element.split("\n")[1];
