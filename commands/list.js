@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageActionRow, MessageButton, MessageSelectMenu } = require('discord.js');
 const fs = require('fs');
+const index = require('../utility.js'); 
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -46,4 +47,20 @@ module.exports = {
 		var menuRow = new MessageActionRow().addComponents(menu); 
 		await interaction.reply({ content: msg, components: [menuRow], ephemeral: false}); 
 	},
+  async deleteTask(interaction) {
+    	var usersPath = 'database/users.json'; 
+			var usersRead = fs.readFileSync(usersPath); 
+			var users = JSON.parse(usersRead); 
+      var tasks = users[interaction.user] 
+      console.debug(interaction.values)
+			for (const element of interaction.values) {				       
+				msg = element.split("\n")[0]; 
+				date = element.split("\n")[1];
+        tasks = tasks.filter(task => (new Date(task[0]).getTime() != new Date(date).getTime() || task[1] != msg)); 
+			}
+      users[interaction.user] = tasks; 
+			usersString = JSON.stringify(users, null, "\t"); 
+			fs.writeFileSync(usersPath, usersString); 
+			await this.execute(interaction); 
+  }
 };

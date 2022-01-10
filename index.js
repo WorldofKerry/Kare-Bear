@@ -1,3 +1,5 @@
+// npm init -y && npm i --save-dev node@17 && npm config set prefix=$(pwd)/node_modules/node && export PATH=$(pwd)/node_modules/node/bin:$PATH
+
 const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
 const { token } = require('./config.json');
@@ -39,11 +41,6 @@ client.once('ready', () => {
 		var users = JSON.parse(usersRead); 
 		for (const [id, tasks] of Object.entries(users)) {
 			for (const task of tasks) {
-				// console.debug(new Date(task[0]).getTime()); 
-				// console.debug(Date.now()); 
-				// console.debug(client.channels.cache.get('397856134360334349').send("test"))
-				// console.debug(client.users.cache)
-				// console.debug(client.users.cache.get(id.substring(2, id.length-2))); 
 				if (new Date(task[0]).getTime() - Date.now() <= 1.08e+7) {
 					client.channels.cache.get('579386313028141110').send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now())); 
 					client.users.fetch(id.substring(2, id.length-1), false).then((user) => {
@@ -68,24 +65,8 @@ client.on('interactionCreate', async interaction => {
 	}
 	if (interaction.isSelectMenu()) {
 		if (interaction.customId === 'delete tasks') {
-			var usersPath = 'database/users.json'; 
-			var usersRead = fs.readFileSync(usersPath); 
-			var users = JSON.parse(usersRead); 
-			for (const element of interaction.values) {
-				var tasks = users[interaction.user]
-				msg = element.split("\n")[0]; 
-				date = element.split("\n")[1]; 
-				for (const task of tasks) {
-					if (task[0] === date && task[1] === msg) {
-						tasks.pop(task)
-					}
-				}
-			}
-			users[interaction.user] = tasks; 
-			usersString = JSON.stringify(users, null, "\t"); 
-			fs.writeFileSync(usersPath, usersString); 
-			const command = client.commands.get('l');
-			await command.execute(interaction); 
+      const command = client.commands.get('l'); 
+			await command.deleteTask(interaction); 
 		}
 	}
 	
@@ -107,4 +88,4 @@ function msToTime(duration) {
 		return "due in " + minutes + " min";
 	}
 	return "due in " + hours + ":" + minutes; 	
-  }
+}
