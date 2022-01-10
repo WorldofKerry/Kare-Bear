@@ -219,8 +219,10 @@ module.exports = {
 		}		
 		var date = new Date(new Date().getFullYear(), month, day, hour);
 		if (date.getTimezoneOffset() === 0) {
-			date = new Date(date.getTime() - 7*60*60*1000); 
-		}		
+      console.debug(date.toString()); 
+			date = new Date(date.getTime() + 7*60*60*1000); 
+      console.debug(date.toString()); 
+		}
 
 		var element = [date.toString(), cmd.substring(amPmIndex)];
 		if (interaction.user in users) {			 
@@ -230,7 +232,7 @@ module.exports = {
 				await interaction.reply({ content: "Error: task already exists", ephemeral: false}); 
 			} else {
 				users[interaction.user].push(element); 
-				await interaction.reply({ content: "Added task: **" + cmd.substring(amPmIndex) + "** " + date.toLocaleString(), ephemeral: false}); 
+				await interaction.reply({ content: "Added task: **" + cmd.substring(amPmIndex) + "** " + new Date(new Date().getFullYear(), month, day, hour).toLocaleString(), ephemeral: false}); 
 			}			
 		} else {
 			users[interaction.user] = [element]; 
