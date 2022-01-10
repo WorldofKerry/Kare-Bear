@@ -217,7 +217,11 @@ module.exports = {
 		if (amPm === "pm") {
 			hour = hour + 12; 
 		}		
-		date = new Date(new Date().getFullYear(), month, day, hour); 	
+		var date = new Date(new Date().getFullYear(), month, day, hour);
+		if (date.getTimezoneOffset() === 0) {
+			date = new Date(date.getTime() - 7*60*60*1000); 
+		}		
+
 		var element = [date.toString(), cmd.substring(amPmIndex)];
 		if (interaction.user in users) {			 
 			var elementJson = JSON.stringify(element); 

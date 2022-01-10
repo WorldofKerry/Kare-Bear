@@ -27,14 +27,17 @@ module.exports = {
 		var menu = new MessageSelectMenu().setCustomId('delete tasks').setPlaceholder('Delete Tasks').setMinValues(1); 
 		var msg = "Your Tasks: \n"; 
     var tasks = utility.getUserTasks(interaction.user); 
-    tasks.forEach(task => {
-      let date = new Date(task[0]); 
-			msg = msg + "**" + task[1] + "** due " + date.toLocaleString() + "\n"; 
-			menu.addOptions([
-				{
-					label: task[1] + " due " + date.toLocaleString(), 
-					value: task[1] + "\n" + date.toString()
-				}]); 
+    tasks.forEach(task => {		
+		var date = new Date(task[0]); 
+		if (date.getTimezoneOffset() === 0) {
+			date = new Date(date.getTime() - 7*60*60*1000); 
+		}
+		msg = msg + "**" + task[1] + "** due " + date.toLocaleString() + "\n"; 
+		menu.addOptions([
+		{
+			label: task[1] + " due " + date.toLocaleString(), 
+			value: task[1] + "\n" + new Date(task[0]).toString()
+		}]); 
     })
 		if (menu['options'].length === 0) {
 			menu.addOptions([
@@ -53,8 +56,8 @@ module.exports = {
 			var users = JSON.parse(usersRead); 
       var tasks = users[interaction.user] 
 			for (const element of interaction.values) {				       
-				msg = element.split("\n")[0]; 
-				date = element.split("\n")[1];
+				var msg = element.split("\n")[0]; 
+				var date = element.split("\n")[1];
         tasks = tasks.filter(task => (new Date(task[0]).getTime() != new Date(date).getTime() || task[1] != msg)); 
 			}
       users[interaction.user] = tasks; 

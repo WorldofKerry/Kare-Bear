@@ -1,30 +1,9 @@
 {
 	"<@156219741197959168>": [
 		[
-			"Mon Jan 10 2022 02:00:00 GMT+0000 (Coordinated Universal Time)",
-			"a"
-		],
-		[
-			"Mon Jan 10 2022 03:00:00 GMT+0000 (Coordinated Universal Time)",
-			"b"
-		],
-		[
-			"Mon Jan 10 2022 04:00:00 GMT+0000 (Coordinated Universal Time)",
-			"c"
-		],
-		[
-			"Mon Jan 10 2022 05:00:00 GMT+0000 (Coordinated Universal Time)",
-			"d"
-		],
-		[
-			"Mon Jan 10 2022 06:00:00 GMT+0000 (Coordinated Universal Time)",
-			"e"
-		],
-		[
-			"Mon Jan 10 2022 07:00:00 GMT+0000 (Coordinated Universal Time)",
-			"f"
+			"Mon Jan 10 2022 21:00:00 GMT-0800 (Pacific Standard Time)",
+			"test"
 		]
 	],
-	"<@445800606767251477>": [
-	]
+	"<@445800606767251477>": []
 }
