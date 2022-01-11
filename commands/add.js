@@ -209,7 +209,7 @@ module.exports = {
 					amPmIndex = hourIndex + 1; 
 				}
 			} else {
-				hour = 0; 
+				hour = 23; 
 				amPmIndex = dayIndex; 
 			}
 			
@@ -219,9 +219,7 @@ module.exports = {
 		}		
 		var date = new Date(new Date().getFullYear(), month, day, hour);
 		if (date.getTimezoneOffset() === 0) {
-      console.debug(date.toString()); 
 			date = new Date(date.getTime() + 8*60*60*1000); 
-      console.debug(date.toString()); 
 		}
 
 		var element = [date.toString(), cmd.substring(amPmIndex)];

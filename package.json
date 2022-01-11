@@ -4,6 +4,7 @@
     "@discordjs/rest": "^0.2.0-canary.0",
     "@keyv/sqlite": "^2.0.4",
     "axios": "^0.24.0",
+    "cheerio": "^1.0.0-rc.10",
     "discord-api-types": "^0.26.1",
     "discord.js": "^13.5.1",
     "dotenv": "^10.0.0",
@@ -19,7 +20,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node ."
   },
   "repository": {
     "type": "git",

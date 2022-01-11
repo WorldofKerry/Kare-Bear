@@ -3,6 +3,9 @@
 const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
 const { token } = require('./config.json');
+const utility = require('./utility.js'); 
+const cheerio = require('cheerio'); 
+const axios = require('axios'); 
 
 // Keep bot online
 const express = require("express")
@@ -35,6 +38,30 @@ for (const file of commandFiles) {
 
 client.once('ready', () => {
 	console.log('Ready!');
+  setInterval(async function() {
+  var url = 'https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-section&dept=GEOS&course=270&section=201'; 
+  // var url = 'https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-course&dept=LING&course=101'; 
+  try {
+    var html = await axios.get(url);
+    console.log(url); 
+    // console.log(typeof html.data); 
+    var findValue = '<tr><td width=&#39;200px&#39;>Total Seats Remaining:</td><td align=&#39;left&#39;><strong>'; 
+    var index = html.data.search(findValue); 
+    console.log(index); 
+    console.log(html.data.substring(index + 90, index + 91)); 
+    
+    if (parseInt(html.data.substring(index + 90, index + 91)) != 0) {
+      client.channels.cache.get('579386313028141110').send('<@286376816074293249>' + html.data.substring(index + 90, index + 91)); 
+
+      client.users.fetch('286376816074293249', false).then((user) => {
+        user.send(html.data.substring(index + 90, index + 91)); 
+      });     
+    }            
+  } catch {
+
+  }  
+  
+  }, 1000);     
 	// setInterval(function() {
 	// 	var usersPath = 'database/users.json'; 
 	// 	var usersRead = fs.readFileSync(usersPath); 
@@ -54,18 +81,43 @@ client.once('ready', () => {
   var usersPath = 'database/users.json'; 
   var usersRead = fs.readFileSync(usersPath); 
   var users = JSON.parse(usersRead); 
-  for (const [id, tasks] of Object.entries(users)) {
-			for (const task of tasks) {
-				if (new Date(task[0]).getTime() - Date.now() <= 1.08e+7) {
+  for (const [id, unorderedTasks] of Object.entries(users)) {
+    var tasks = utility.getUserTasks(id); 
+    tasks.forEach(task => {
+      if (new Date(task[0]).getTime() - Date.now() <= 1.08e+7) {
+        client.channels.cache.get('579386313028141110').send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now())); 
+          client.users.fetch(id.substring(2, id.length-1), false).then((user) => {
+            user.send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now())); 
+          });  
+        if (new Date(task[0]).getTime() - Date.now() <= 3.6e+6) {
+          console.debug("Notification timeout: " + new Date((new Date(task[0]).getTime() - Date.now())).toString()); 
+          console.debug(new Date(task[0]).getTime()); 
           setTimeout(function() {
             client.channels.cache.get('579386313028141110').send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now())); 
             client.users.fetch(id.substring(2, id.length-1), false).then((user) => {
               user.send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now())); 
-					  }); 
-          }, 1.08e+7 - new Date(task[0]).getTime() - Date.now()); 					
-				}
-			}
-		}
+            });    
+            console.debug("Notification timeout: " + new Date((new Date(task[0]).getTime() - Date.now())).toString()); 
+            console.debug(new Date(task[0]).getTime()); 
+            setTimeout(function() {
+              client.channels.cache.get('579386313028141110').send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now())); 
+              client.users.fetch(id.substring(2, id.length-1), false).then((user) => {
+                user.send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now())); 
+              });
+              console.debug("Notification timeout: " + new Date((new Date(task[0]).getTime() - Date.now())).toString()); 
+              console.debug(new Date(task[0]).getTime()); 
+              setTimeout(function() {
+                client.channels.cache.get('579386313028141110').send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now())); 
+                client.users.fetch(id.substring(2, id.length-1), false).then((user) => {
+                  user.send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now())); 
+                });             
+              }, 1.2e+6);               
+            }, 1.2e+6);          
+          }, 1.2e+6); 
+        }
+      }      
+    }); 
+  }
 });
 
 client.on('interactionCreate', async interaction => {
