@@ -48,9 +48,10 @@ client.once('ready', () => {
     var findValue = '<tr><td width=&#39;200px&#39;>Total Seats Remaining:</td><td align=&#39;left&#39;><strong>'; 
     var index = html.data.search(findValue); 
     console.log(index); 
-    console.log(html.data.substring(index + 90, index + 91)); 
+    var string = html.data.substring(index + 90, index + 91); 
+    console.log(string); 
     
-    if (parseInt(html.data.substring(index + 90, index + 91)) != 0) {
+    if (!Number.isNaN(parseInt(string)) && parseInt(string) != 0) {
       client.channels.cache.get('579386313028141110').send('<@286376816074293249>' + html.data.substring(index + 90, index + 91)); 
 
       client.users.fetch('286376816074293249', false).then((user) => {
@@ -61,7 +62,7 @@ client.once('ready', () => {
 
   }  
   
-  }, 1000);     
+  }, 10000);     
 	// setInterval(function() {
 	// 	var usersPath = 'database/users.json'; 
 	// 	var usersRead = fs.readFileSync(usersPath); 
