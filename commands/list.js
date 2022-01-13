@@ -1,9 +1,9 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageActionRow, MessageButton, MessageSelectMenu } = require('discord.js');
-const fs = require('fs');
-const utility = require('../utility.js'); 
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { MessageActionRow, MessageButton, MessageSelectMenu } from 'discord.js';
+import fs from 'fs';
+import { getUserTasks } from '../utility.js'
 
-module.exports = {
+export default {
 	data: new SlashCommandBuilder()
 		.setName('l')
 		.setDescription('list the user\'s tasks'),
@@ -26,7 +26,7 @@ module.exports = {
 			);		
 		var menu = new MessageSelectMenu().setCustomId('delete tasks').setPlaceholder('Delete Tasks').setMinValues(1); 
 		var msg = "Your Tasks: \n"; 
-    var tasks = utility.getUserTasks(interaction.user); 
+    var tasks = getUserTasks(interaction.user); 
     tasks.forEach(task => {		
 		var date = new Date(task[0]); 
 		if (date.getTimezoneOffset() === 0) {
@@ -61,7 +61,7 @@ module.exports = {
         tasks = tasks.filter(task => (new Date(task[0]).getTime() != new Date(date).getTime() || task[1] != msg)); 
 			}
       users[interaction.user] = tasks; 
-			usersString = JSON.stringify(users, null, "\t"); 
+			var usersString = JSON.stringify(users, null, "\t"); 
 			fs.writeFileSync(usersPath, usersString); 
 			await this.execute(interaction); 
   }

@@ -1,11 +1,12 @@
 // npm init -y && npm i --save-dev node@17 && npm config set prefix=$(pwd)/node_modules/node && export PATH=$(pwd)/node_modules/node/bin:$PATH
-
-const fs = require('fs');
-const { Client, Collection, Intents } = require('discord.js');
+import { createRequire } from "module"; 
+const require = createRequire(import.meta.url); 
+import fs from 'fs';
+import { Client, Collection, Intents } from 'discord.js';
 const { token } = require('./config.json');
-const utility = require('./utility.js');
-const cheerio = require('cheerio');
-const axios = require('axios');
+import { getUserTasks } from './utility.js'
+import cheerio from 'cheerio';
+import axios from 'axios';
 
 // Keep bot online
 const express = require("express")
@@ -21,7 +22,7 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
 const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
 for (const file of eventFiles) {
-  const event = require(`./events/${file}`);
+  let event = await import(`./events/${file}`); 
   if (event.once) {
     client.once(event.name, (...args) => event.execute(...args));
   } else {
@@ -32,9 +33,22 @@ for (const file of eventFiles) {
 client.commands = new Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
-  const command = require(`./commands/${file}`);
-  client.commands.set(command.data.name, command);
+  let command = await import(`./commands/${file}`);
+  // console.log(command); 
+  // console.log(command.default.data); 
+  client.commands.set(command.default.data.name, command.default);
 }
+
+// Initialize Cloud Firestore through Firebase
+import { initializeApp } from "firebase/app"
+import { getFirestore } from "firebase/firestore"
+const firebaseApp = initializeApp({
+  apiKey: '### FIREBASE API KEY ###',
+  authDomain: '### FIREBASE AUTH DOMAIN ###',
+  projectId: '### CLOUD FIRESTORE PROJECT ID ###'
+});
+
+const db = getFirestore();
 
 client.once('ready', () => {
   console.log('Ready!');
@@ -52,27 +66,12 @@ client.once('ready', () => {
     })
 
   }, 600000);
-  // setInterval(function() {
-  // 	var usersPath = 'database/users.json'; 
-  // 	var usersRead = fs.readFileSync(usersPath); 
-  // 	var users = JSON.parse(usersRead); 
-  // 	for (const [id, tasks] of Object.entries(users)) {
-  // 		for (const task of tasks) {
-  // 			if (new Date(task[0]).getTime() - Date.now() <= 1.08e+7) {
-  // 				client.channels.cache.get('579386313028141110').send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now())); 
-  // 				client.users.fetch(id.substring(2, id.length-1), false).then((user) => {
-  // 					user.send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now())); 
-  // 				})
-  // 			}
-  // 		}
-  // 	}
-  // }, 1.8e+6)
 
   var usersPath = 'database/users.json';
   var usersRead = fs.readFileSync(usersPath);
   var users = JSON.parse(usersRead);
   for (const [id, unorderedTasks] of Object.entries(users)) {
-    var tasks = utility.getUserTasks(id);
+    var tasks = getUserTasks(id);
     tasks.forEach(task => {
       if (new Date(task[0]).getTime() - Date.now() <= 1.08e+7) {
         client.channels.cache.get('579386313028141110').send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now()));

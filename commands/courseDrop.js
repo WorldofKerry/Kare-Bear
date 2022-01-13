@@ -1,11 +1,11 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const { strictEqual } = require('assert');
-const fs = require('fs');
-const { TLSSocket } = require('tls');
-const cheerio = require('cheerio'); 
-const axios = require('axios'); 
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { strictEqual } from 'assert';
+import fs from 'fs';
+import { TLSSocket } from 'tls';
+import cheerio from 'cheerio'; 
+import axios from 'axios'; 
 
-module.exports = {
+export default {
 	data: new SlashCommandBuilder()
 		.setName('drop')
 		.setDescription('Replies with Pong!')

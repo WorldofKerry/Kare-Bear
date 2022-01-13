@@ -1,9 +1,9 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const { strictEqual } = require('assert');
-const fs = require('fs');
-const { TLSSocket } = require('tls');
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { strictEqual } from 'assert';
+import fs from 'fs';
+import { TLSSocket } from 'tls';
 
-module.exports = {
+export default {
 	data: new SlashCommandBuilder()
 		.setName('a')
 		.setDescription('Add task with mobile settings')
@@ -25,57 +25,58 @@ module.exports = {
 		// .addSubcommand(subcommand => subcommand.setName('server')
 		// 	.setDescription('info about the server')),
 	async execute(interaction) {	
-		usersPath = 'database/users.json'; 
-		usersString = fs.readFileSync(usersPath); 
-		users = JSON.parse(usersString); 
-		cmd = interaction.options.data[0].value; 
+		var usersPath = 'database/users.json'; 
+		var usersString = fs.readFileSync(usersPath); 
+		var users = JSON.parse(usersString); 
+		var cmd = interaction.options.data[0].value; 
+    var month, monthIndex, day, dayIndex, amPm, amPmIndex, hour, hourIndex; 
 		switch (cmd) {
 			case cmd.toLowerCase().match(/jan/)?.input: 
-			var month = 0; 
+			month = 0; 
 			monthIndex = /jan/.exec(cmd.toLowerCase()).index; 
 			break; 
 			case cmd.toLowerCase().match(/feb/)?.input: 
-			var month = 1; 
+			month = 1; 
 			monthIndex = /feb/.exec(cmd.toLowerCase()).index; 
 			break; 
 			case cmd.toLowerCase().match(/mar/)?.input: 
-			var month = 2; 
+			month = 2; 
 			monthIndex = /mar/.exec(cmd.toLowerCase()).index; 
 			break; 
 			case cmd.toLowerCase().match(/apr/)?.input: 
-			var month = 3; 
+			month = 3; 
 			monthIndex = /apr/.exec(cmd.toLowerCase()).index; 
 			break; 
 			case cmd.toLowerCase().match(/may/)?.input: 
-			var month = 4; 
+			month = 4; 
 			monthIndex = /may/.exec(cmd.toLowerCase()).index; 
 			break; 
 			case cmd.toLowerCase().match(/jun/)?.input: 
-			var month = 5; 
+			month = 5; 
 			monthIndex = /jun/.exec(cmd.toLowerCase()).index; 
 			break; 
 			case cmd.toLowerCase().match(/jul/)?.input: 
-			var month = 6; 
+			month = 6; 
 			monthIndex = /jul/.exec(cmd.toLowerCase()).index; 
 			break; 
 			case cmd.toLowerCase().match(/aug/)?.input: 
-			var month = 7; 
+			month = 7; 
 			monthIndex = /aug/.exec(cmd.toLowerCase()).index; 
 			break; 
 			case cmd.toLowerCase().match(/sep/)?.input: 
-			var month = 8; 
+			month = 8; 
 			monthIndex = /sep/.exec(cmd.toLowerCase()).index; 
 			break; 
 			case cmd.toLowerCase().match(/oct/)?.input: 
-			var month = 9; 
+			month = 9; 
 			monthIndex = /oct/.exec(cmd.toLowerCase()).index; 
 			break; 
 			case cmd.toLowerCase().match(/nov/)?.input: 
-			var month = 10; 
+			month = 10; 
 			monthIndex = /nov/.exec(cmd.toLowerCase()).index; 
 			break; 
 			case cmd.toLowerCase().match(/dec/)?.input: 
-			var month = 11; 
+			month = 11; 
 			monthIndex = /dec/.exec(cmd.toLowerCase()).index; 
 			break; 		
 		}
@@ -90,12 +91,13 @@ module.exports = {
 				dayIndex++; 
 			}
 		} else {
+      var nextDay; 
 			switch(cmd) {
 				case cmd.toLowerCase().match(/today/)?.input: 
 				monthIndex = /today/.exec(cmd.toLowerCase()).index; 
 				dayIndex = / /.exec(cmd.substring(monthIndex + 1)).index + 
 				monthIndex + 1; 
-				var month = new Date().getMonth(); 
+				month = new Date().getMonth(); 
 				day = new Date().getDate()
 				break; 
 
@@ -104,7 +106,7 @@ module.exports = {
 				dayIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 				tomorrow = new Date(); 
 				tomorrow.setDate(new Date().getDate() + 1); 
-				var month = tomorrow.getMonth(); 
+				month = tomorrow.getMonth(); 
 				day = tomorrow.getDate(); 
 				break; 
 
@@ -113,7 +115,7 @@ module.exports = {
 				dayIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 				nextDay = new Date(); 
 				nextDay.setDate(new Date().getDate() + (1 - 1 - new Date().getDay() + 7) % 7 + 1); 
-				var month = nextDay.getMonth(); 
+				month = nextDay.getMonth(); 
 				day = nextDay.getDate(); 
 				break; 
 
@@ -122,7 +124,7 @@ module.exports = {
 				dayIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 				nextDay = new Date(); 
 				nextDay.setDate(new Date().getDate() + (2 - 1 - new Date().getDay() + 7) % 7 + 1); 
-				var month = nextDay.getMonth(); 
+				month = nextDay.getMonth(); 
 				day = nextDay.getDate(); 
 				break; 
 
@@ -131,7 +133,7 @@ module.exports = {
 				dayIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 				nextDay = new Date(); 
 				nextDay.setDate(new Date().getDate() + (3 - 1 - new Date().getDay() + 7) % 7 + 1); 
-				var month = nextDay.getMonth(); 
+				month = nextDay.getMonth(); 
 				day = nextDay.getDate(); 
 				break; 
 
@@ -140,7 +142,7 @@ module.exports = {
 				dayIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 				nextDay = new Date(); 
 				nextDay.setDate(new Date().getDate() + (4 - 1 - new Date().getDay() + 7) % 7 + 1); 
-				var month = nextDay.getMonth(); 
+				month = nextDay.getMonth(); 
 				day = nextDay.getDate(); 
 				break; 
 
@@ -149,7 +151,7 @@ module.exports = {
 				dayIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 				nextDay = new Date(); 
 				nextDay.setDate(new Date().getDate() + (5 - 1 - new Date().getDay() + 7) % 7 + 1); 
-				var month = nextDay.getMonth(); 
+				month = nextDay.getMonth(); 
 				day = nextDay.getDate(); 
 				break; 
 
@@ -158,7 +160,7 @@ module.exports = {
 				dayIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 				nextDay = new Date(); 
 				nextDay.setDate(new Date().getDate() + (6 - 1 - new Date().getDay() + 7) % 7 + 1); 
-				var month = nextDay.getMonth(); 
+				month = nextDay.getMonth(); 
 				day = nextDay.getDate(); 
 				break; 
 
@@ -167,13 +169,13 @@ module.exports = {
 				dayIndex = / /.exec(cmd.substring(monthIndex + 1)).index + monthIndex + 1; 
 				nextDay = new Date(); 
 				nextDay.setDate(new Date().getDate() + (7 - 1 - new Date().getDay() + 7) % 7 + 1); 
-				var month = nextDay.getMonth(); 
+				month = nextDay.getMonth(); 
 				day = nextDay.getDate(); 
 				break; 
 
 				default: 
 				dayIndex = 0; 
-				var month = new Date().getMonth(); 
+				month = new Date().getMonth(); 
 				day = new Date().getDate()
 
 			}
