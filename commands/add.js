@@ -1,7 +1,19 @@
+import { createRequire } from "module"; 
+const require = createRequire(import.meta.url); 
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { strictEqual } from 'assert';
 import fs from 'fs';
 import { TLSSocket } from 'tls';
+
+import { initializeApp, cert, getApps } from 'firebase-admin/app';
+import { getFirestore } from "firebase-admin/firestore"; 
+const serviceAccount = require("../kare-bear-firebase-adminsdk-5cqfu-188f66f65b.json"); 
+if (getApps().length < 1) {
+  initializeApp({
+    credential: cert(serviceAccount)
+  });
+}
+const db = getFirestore(); 
 
 export default {
 	data: new SlashCommandBuilder()
@@ -11,23 +23,7 @@ export default {
 		.addStringOption(option => option
 			.setName('task')
 			.setDescription('[month] [date] [hour] [am/pm] task')),
-		// 	.addChoice('test', 'testing'))
-		// .addStringOption(option => option.setName('task').setDescription('Task for automatic parsing')),
-		// .addSubcommand(subcommand => subcommand.setName('user')
-		// 	.setDescription("info about user")
-		// 	.addUserOption(option => option
-		// 		.setName('target')
-		// 		.setDescription('The user'))
-		// 		.set
-		// 	.addUserOption(option => option
-		// 		.setName('soup')
-		// 		.setDescription('fish')))
-		// .addSubcommand(subcommand => subcommand.setName('server')
-		// 	.setDescription('info about the server')),
 	async execute(interaction) {	
-		var usersPath = 'database/users.json'; 
-		var usersString = fs.readFileSync(usersPath); 
-		var users = JSON.parse(usersString); 
 		var cmd = interaction.options.data[0].value; 
     var month, monthIndex, day, dayIndex, amPm, amPmIndex, hour, hourIndex; 
 		switch (cmd) {
@@ -223,22 +219,31 @@ export default {
 		if (date.getTimezoneOffset() === 0) {
 			date = new Date(date.getTime() + 8*60*60*1000); 
 		}
-
-		var element = [date.toString(), cmd.substring(amPmIndex)];
-		if (interaction.user in users) {			 
-			var elementJson = JSON.stringify(element); 
-			var tasksJson = JSON.stringify(users[interaction.user]); 
-			if (tasksJson.indexOf(elementJson) != -1) {
-				await interaction.reply({ content: "Error: task already exists", ephemeral: false}); 
-			} else {
-				users[interaction.user].push(element); 
-				await interaction.reply({ content: "Added task: **" + cmd.substring(amPmIndex) + "** " + new Date(new Date().getFullYear(), month, day, hour).toLocaleString(), ephemeral: false}); 
-			}			
-		} else {
-			users[interaction.user] = [element]; 
-			await interaction.reply({ content: "Added task: **" + cmd.substring(amPmIndex) + "** " + date.toLocaleString(), ephemeral: false}); 
-		}
-		usersString = JSON.stringify(users, null, "\t"); 
-		fs.writeFileSync(usersPath, usersString); 		
+    var docRef = db.collection("discordUsers").doc(interaction.user.id); 
+    docRef.get().then((doc) => {
+      if (doc.exists) {        
+        var tasks = doc.data().tasks;
+        tasks.push({
+          task: cmd.substring(amPmIndex), 
+          date: date.toString()
+        }); 
+        tasks = new Set(tasks); 
+        tasks = [... tasks]
+        db.collection("discordUsers").doc(interaction.user.id).update({
+          tasks: tasks
+        })
+        .then((docRef) => {
+            console.log("Document written with ID: ", docRef);
+            interaction.reply({ content: "Added task " + cmd.substring(amPmIndex) + " for " + date.toString(), ephemeral: true });
+        })
+        .catch((error) => {
+            console.error("Error adding document: ", error);
+        });
+      } else {
+        console.log("No such document with add"); 
+      }
+    }).catch((error) => {
+      console.log("Error getting document:", error); 
+    }); 
 	},
 };

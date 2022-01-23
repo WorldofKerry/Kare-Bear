@@ -1,6 +1,6 @@
 // npm init -y && npm i --save-dev node@17 && npm config set prefix=$(pwd)/node_modules/node && export PATH=$(pwd)/node_modules/node/bin:$PATH
-import { createRequire } from "module"; 
-const require = createRequire(import.meta.url); 
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
 import fs from 'fs';
 import { Client, Collection, Intents } from 'discord.js';
 const { token } = require('./config.json');
@@ -20,9 +20,19 @@ app.get("/", (req, res) => {
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
+import { initializeApp, cert, getApps } from 'firebase-admin/app';
+import { getFirestore } from "firebase-admin/firestore"; 
+const serviceAccount = require("./kare-bear-firebase-adminsdk-5cqfu-188f66f65b.json"); 
+if (getApps().length < 1) {
+  initializeApp({
+    credential: cert(serviceAccount)
+  });
+}
+const db = getFirestore(); 
+
 const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
 for (const file of eventFiles) {
-  let event = await import(`./events/${file}`); 
+  let event = await import(`./events/${file}`);
   if (event.once) {
     client.once(event.name, (...args) => event.execute(...args));
   } else {
@@ -39,25 +49,15 @@ for (const file of commandFiles) {
   client.commands.set(command.default.data.name, command.default);
 }
 
-// Initialize Cloud Firestore through Firebase
-import { initializeApp } from "firebase/app"
-import { getFirestore } from "firebase/firestore"
-const firebaseApp = initializeApp({
-  apiKey: '### FIREBASE API KEY ###',
-  authDomain: '### FIREBASE AUTH DOMAIN ###',
-  projectId: '### CLOUD FIRESTORE PROJECT ID ###'
-});
-
-const db = getFirestore();
-
+// Webscrape notification system
 client.once('ready', () => {
   console.log('Ready!');
   setInterval(async function() {
-    var url = 'https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-section&dept=GEOS&course=270&section=L2A';
+    var url = '';
     getCourseSeatRemaining(url, 10).then((value) => {
-      console.log(value); 
+      console.log(value);
       if (value[1] != null && parseInt(value[1]) != 0) {
-        client.channels.cache.get('579386313028141110').send('<@286376816074293249>' + value[0] + " Total Seats Remaining: " +  value[1]);
+        client.channels.cache.get('579386313028141110').send('<@286376816074293249>' + value[0] + " Total Seats Remaining: " + value[1]);
 
         client.users.fetch('286376816074293249', false).then((user) => {
           user.send(value[0] + " Total Seats Remaining: " + value[1]);
@@ -66,47 +66,6 @@ client.once('ready', () => {
     })
 
   }, 600000);
-
-  var usersPath = 'database/users.json';
-  var usersRead = fs.readFileSync(usersPath);
-  var users = JSON.parse(usersRead);
-  for (const [id, unorderedTasks] of Object.entries(users)) {
-    var tasks = getUserTasks(id);
-    tasks.forEach(task => {
-      if (new Date(task[0]).getTime() - Date.now() <= 1.08e+7) {
-        client.channels.cache.get('579386313028141110').send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now()));
-        client.users.fetch(id.substring(2, id.length - 1), false).then((user) => {
-          user.send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now()));
-        });
-        if (new Date(task[0]).getTime() - Date.now() <= 3.6e+6) {
-          console.debug("Notification timeout: " + new Date((new Date(task[0]).getTime() - Date.now())).toString());
-          console.debug(new Date(task[0]).getTime());
-          setTimeout(function() {
-            client.channels.cache.get('579386313028141110').send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now()));
-            client.users.fetch(id.substring(2, id.length - 1), false).then((user) => {
-              user.send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now()));
-            });
-            console.debug("Notification timeout: " + new Date((new Date(task[0]).getTime() - Date.now())).toString());
-            console.debug(new Date(task[0]).getTime());
-            setTimeout(function() {
-              client.channels.cache.get('579386313028141110').send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now()));
-              client.users.fetch(id.substring(2, id.length - 1), false).then((user) => {
-                user.send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now()));
-              });
-              console.debug("Notification timeout: " + new Date((new Date(task[0]).getTime() - Date.now())).toString());
-              console.debug(new Date(task[0]).getTime());
-              setTimeout(function() {
-                client.channels.cache.get('579386313028141110').send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now()));
-                client.users.fetch(id.substring(2, id.length - 1), false).then((user) => {
-                  user.send(id + " **" + task[1] + "** " + msToTime(new Date(task[0]).getTime() - Date.now()));
-                });
-              }, 1.2e+6);
-            }, 1.2e+6);
-          }, 1.2e+6);
-        }
-      }
-    });
-  }
 });
 
 client.on('interactionCreate', async interaction => {
