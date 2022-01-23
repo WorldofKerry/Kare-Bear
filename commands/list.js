@@ -64,30 +64,27 @@ export default {
     });
   },
   async deleteTask(interaction) {
+    var tasksToDelete = []    
     await interaction.values.forEach((element) => {
       var msg = element.split("\n")[0];
       var date = element.split("\n")[1];
-      var docRef = db.collection("discordUsers").doc(interaction.user.id);
-      docRef.get().then((doc) => {
-        if (doc.exists) {
-          var tasks = doc.data().tasks;
-          tasks = tasks.filter(task => (new Date(task.date).getTime() != new Date(date).getTime() || task.task != msg));
-          db.collection("discordUsers").doc(interaction.user.id).update({
-            "tasks": tasks
-          })
-            .then((docRef) => {
-              console.log("Document written with ID: ", docRef);
-            })
-            .catch((error) => {
-              console.error("Error adding document: ", error);
-            });
-        } else {
-          console.log("No such document with delete")
-        }
-      }).catch((error) => {
-        console.log("Error getting document:", error);
-      });      
-    })
-    this.execute(interaction);  
+      tasksToDelete.push({
+          task: msg, 
+          date: date
+        }); 
+    });   
+    var docRef = db.collection("discordUsers").doc(interaction.user.id);
+    var doc = await docRef.get()
+    if (doc.exists) {
+      var tasks = doc.data().tasks
+      console.log(tasks)
+      console.log(tasksToDelete)
+      tasks = tasks.filter(task => !tasksToDelete.find(deleteTask => deleteTask.date === task.date && deleteTask.task === task.task));
+      console.log(tasks)
+      await db.collection("discordUsers").doc(interaction.user.id).update({
+          "tasks": tasks
+        })
+      this.execute(interaction);  
+    }    
   }
 };
