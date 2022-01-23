@@ -233,8 +233,11 @@ export default {
           tasks: tasks
         })
         .then((docRef) => {
+            if (date.getTimezoneOffset() === 0) {
+              date = new Date(date.getTime() - 8*60*60*1000); 
+            }
             console.log("Document written with ID: ", docRef);
-            interaction.reply({ content: "Added task " + cmd.substring(amPmIndex) + " for " + date.toString(), ephemeral: true });
+            interaction.reply({ content: "Added task " + cmd.substring(amPmIndex) + " for " + date.toLocaleString("en-US"), ephemeral: true });
         })
         .catch((error) => {
             console.error("Error adding document: ", error);

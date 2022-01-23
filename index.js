@@ -50,23 +50,23 @@ for (const file of commandFiles) {
 }
 
 // Webscrape notification system
-client.once('ready', () => {
-  console.log('Ready!');
-  setInterval(async function() {
-    var url = '';
-    getCourseSeatRemaining(url, 10).then((value) => {
-      console.log(value);
-      if (value[1] != null && parseInt(value[1]) != 0) {
-        client.channels.cache.get('579386313028141110').send('<@286376816074293249>' + value[0] + " Total Seats Remaining: " + value[1]);
+// client.once('ready', () => {
+//   console.log('Ready!');
+//   setInterval(async function() {
+//     var url = '';
+//     getCourseSeatRemaining(url, 10).then((value) => {
+//       console.log(value);
+//       if (value[1] != null && parseInt(value[1]) != 0) {
+//         client.channels.cache.get('579386313028141110').send('<@286376816074293249>' + value[0] + " Total Seats Remaining: " + value[1]);
 
-        client.users.fetch('286376816074293249', false).then((user) => {
-          user.send(value[0] + " Total Seats Remaining: " + value[1]);
-        });
-      }
-    })
+//         client.users.fetch('286376816074293249', false).then((user) => {
+//           user.send(value[0] + " Total Seats Remaining: " + value[1]);
+//         });
+//       }
+//     })
 
-  }, 600000);
-});
+//   }, 600000);
+// });
 
 client.on('interactionCreate', async interaction => {
   if (interaction.isCommand()) {
